@@ -1,5 +1,9 @@
 # from datetime import datetime
 
+from flask_jwt_extended import (
+    create_access_token, jwt_required, get_jwt_identity
+)
+
 from flask_restful import Resource
 
 from flaskapi.flaskapi.models import User as UserModel
@@ -22,12 +26,16 @@ class Login(Resource):
             }, 401
         return {
             'message': 'Successful authenticated',
-            'token': '...token...'
+            'token': create_access_token(identity=user.email)
         }, 200
 
 
 class User(Resource):
-    pass
+    @jwt_required
+    def get(self):
+        cur_user_email = get_jwt_identity()
+        user = UserModel.find_by_email(cur_user_email)
+        return user.to_dict()
 
 
 class Deposit(Resource):
