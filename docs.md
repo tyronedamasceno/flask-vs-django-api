@@ -48,7 +48,7 @@ obs3: you need to send your auth token in request header `Authorization` to acce
 |  POST  | Send some amount from your account to another one  |  *destiny_doc_number*, *value*   |
 
 
-**/extract**
+**/statements**
 
 | Method |     Description             |  Parameters  |
 | ------ | --------------------------- | ------------ |
