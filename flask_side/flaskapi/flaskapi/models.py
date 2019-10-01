@@ -40,6 +40,10 @@ class User(db.Model, BaseModel):
         db.Boolean,
         default=True
     )
+    transactions = db.relationship(
+        'Transaction',
+        backref='owner'
+    )
 
     __to_dict_fields__ = {
         'id': id,
@@ -56,6 +60,9 @@ class User(db.Model, BaseModel):
             balance=self.balance
         )
 
+    def find_self_transactions(self):
+        return Transaction.find_transaction_from_user(self.id)
+
     @staticmethod
     def generate_hash(password):
         return sha256.hash(password)
@@ -67,3 +74,34 @@ class User(db.Model, BaseModel):
     @classmethod
     def find_by_doc_number(cls, doc_number):
         return cls.query.filter_by(doc_number=doc_number).first()
+
+
+class Transaction(db.Model, BaseModel):
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+    timestamp = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+    value = db.Column(
+        db.Float,
+        nullable=False
+    )
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id')
+    )
+
+    def to_dict(self):
+        return dict(
+            id=self.id,
+            timestamp=self.timestamp,
+            value=self.value,
+            user_id=self.user_id
+        )
+
+    @classmethod
+    def find_transaction_from_user(cls, user_id):
+        return cls.query.filter_by(user_id=user_id)
