@@ -14,7 +14,7 @@ from flaskapi.flaskapi.models import (
     User as UserModel, Transaction as TransactionModel
 )
 from flaskapi.flaskapi.request_parsers import (
-    login_parser, user_parser, self_transaction_parser
+    login_parser, user_parser, self_transaction_parser, transfer_parser
 )
 
 
@@ -148,7 +148,38 @@ class Withdraw(Resource):
 
 
 class Transfer(Resource):
-    pass
+    @jwt_required
+    def post(self):
+        data = transfer_parser.parse_args()
+        value = data['value']
+        user = _get_current_user()
+        if not user:
+            return {'message': 'User not found'}, 404
+        if not isinstance(value, numbers.Real):
+            try:
+                value = float(value)
+            except ValueError:
+                return {'message': 'Invalid value'}, 400
+        if value <= 0:
+            return {'message': 'You must transfer a value greater than 0'}, 400
+        if value > user.balance:
+            return {'message': 'You have not enough balance'}, 400
+
+        destiny_user = UserModel.find_by_doc_number(data['destiny_doc_number'])
+        if not destiny_user:
+            return {'message': 'Destiny User not found'}, 404
+        if destiny_user.id == user.id:
+            return {'message': 'You cant transfer to yourself'}, 400
+        user.update_balance(-value)
+        destiny_user.update_balance(value)
+        transaction = _create_transaction(user, -value)
+        destiny_transaction = _create_transaction(destiny_user, value)
+
+        return {
+            'message': 'Success transfer',
+            'data': transaction.to_dict(),
+            'data_destiny': destiny_transaction.to_dict()
+        }, 200
 
 
 class Statements(Resource):
