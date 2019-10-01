@@ -105,11 +105,11 @@ venv.bak/
 
 
 ### VisualStudioCode ###
-.vscode/*
-.vscode/settings.json
-.vscode/tasks.json
-.vscode/launch.json
-.vscode/extensions.json
+flask_side/.vscode/*
+flask_side/.vscode/settings.json
+flask_side/.vscode/tasks.json
+flask_side/.vscode/launch.json
+flask_side/.vscode/extensions.json
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
