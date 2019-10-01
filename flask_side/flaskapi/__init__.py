@@ -21,7 +21,7 @@ from flaskapi.flaskapi import models
 db.create_all()
 
 # from flaskapi.flaskapi import populate_db
-# # populate_db.populate()
+# populate_db.populate()
 
 api.add_resource(resources.Home, '/')
 api.add_resource(resources.Login, '/login')

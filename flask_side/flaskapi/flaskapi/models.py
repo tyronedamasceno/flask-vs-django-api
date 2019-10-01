@@ -72,6 +72,10 @@ class User(db.Model, BaseModel):
         return sha256.verify(password, hash)
 
     @classmethod
+    def find_by_email(cls, email):
+        return cls.query.filter_by(email=email).first()
+
+    @classmethod
     def find_by_doc_number(cls, doc_number):
         return cls.query.filter_by(doc_number=doc_number).first()
 
