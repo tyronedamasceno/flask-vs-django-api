@@ -70,6 +70,10 @@ class User(db.Model, BaseModel):
         self.is_active = False
         db.session.commit()
 
+    def update_balance(self, value):
+        self.balance += value
+        db.session.commit()
+
     @staticmethod
     def generate_hash(password):
         return sha256.hash(password)
@@ -114,7 +118,7 @@ class Transaction(db.Model, BaseModel):
     def to_dict(self):
         return dict(
             id=self.id,
-            timestamp=self.timestamp,
+            timestamp=self.timestamp.isoformat(),
             value=self.value,
             user_id=self.user_id
         )

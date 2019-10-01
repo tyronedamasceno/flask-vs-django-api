@@ -1,5 +1,7 @@
 # from datetime import datetime
 
+import numbers
+
 from flask import request
 
 from flask_jwt_extended import (
@@ -8,8 +10,18 @@ from flask_jwt_extended import (
 
 from flask_restful import Resource
 
-from flaskapi.flaskapi.models import User as UserModel
-from flaskapi.flaskapi.request_parsers import login_parser, user_parser
+from flaskapi.flaskapi.models import (
+    User as UserModel, Transaction as TransactionModel
+)
+from flaskapi.flaskapi.request_parsers import (
+    login_parser, user_parser, self_transaction_parser
+)
+
+
+def _create_transaction(user, value):
+    t = TransactionModel(user_id=user.id, value=value)
+    t.save_to_db()
+    return t
 
 
 def _get_current_user():
@@ -88,11 +100,51 @@ class User(Resource):
 
 
 class Deposit(Resource):
-    pass
+    @jwt_required
+    def post(self):
+        data = self_transaction_parser.parse_args()
+        value = data['value']
+        user = _get_current_user()
+        if not user:
+            return {'message': 'User not found'}, 404
+        if not isinstance(value, numbers.Real):
+            try:
+                value = float(value)
+            except ValueError:
+                return {'message': 'Invalid value'}, 400
+        if value <= 0:
+            return {'message': 'You must deposit a value greater than 0'}, 400
+        user.update_balance(value)
+        transaction = _create_transaction(user, value)
+        return {
+            'message': 'Deposit success',
+            'data': transaction.to_dict()
+        }
 
 
 class Withdraw(Resource):
-    pass
+    @jwt_required
+    def post(self):
+        data = self_transaction_parser.parse_args()
+        value = data['value']
+        user = _get_current_user()
+        if not user:
+            return {'message': 'User not found'}, 404
+        if not isinstance(value, numbers.Real):
+            try:
+                value = float(value)
+            except ValueError:
+                return {'message': 'Invalid value'}, 400
+        if value <= 0:
+            return {'message': 'You must withdraw a value greater than 0'}, 400
+        if value > user.balance:
+            return {'message': 'You have not enough balance'}, 400
+        user.update_balance(-value)
+        transaction = _create_transaction(user, -value)
+        return {
+            'message': 'Withdraw success',
+            'data': transaction.to_dict()
+        }
 
 
 class Transfer(Resource):
