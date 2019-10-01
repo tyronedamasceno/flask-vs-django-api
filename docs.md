@@ -9,7 +9,7 @@ obs1: parameters are from request body (json)
 
 obs2: endpoint requires a `/api/v1` prefix, ex: `localhost:5000/api/v1/extract`
 
-obs3: you need to send your auth token in request header `Authorization` to access the API for **ALL** endpoints **EXCEPT /user POST and /login**
+obs3: you need to send `Bearer <your auth token>` in request header `Authorization` to access the API for **ALL** endpoints **EXCEPT /user POST and /login**. Token will expire after 1 hour.
 
 **/login**
 
