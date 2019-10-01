@@ -1,4 +1,5 @@
-# This app is a Flask REST api to simulate banking
+# This app is a REST api to simulate banking
+## We have two versions with same endpoints, one write using Flask and the other using Django Rest Framework
 
 ### Here, you can see the documentation for the API
 
