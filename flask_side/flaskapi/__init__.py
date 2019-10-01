@@ -17,11 +17,11 @@ db = SQLAlchemy(app)
 from flaskapi.flaskapi import resources
 from flaskapi.flaskapi import models
 
-db.drop_all()
+# db.drop_all()
 db.create_all()
 
-from flaskapi.flaskapi import populate_db
-populate_db.populate()
+# from flaskapi.flaskapi import populate_db
+# # populate_db.populate()
 
 api.add_resource(resources.Home, '/')
 api.add_resource(resources.Login, '/login')

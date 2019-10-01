@@ -1,10 +1,15 @@
 # from datetime import datetime
 
+from flask import request
+
 from flask_restful import Resource
+
+from flaskapi.flaskapi.request_parsers import login_parser
 
 
 class Home(Resource):
-    pass
+    def get(self):
+        return {'Hello': 'World'}
 
 
 class Login(Resource):
