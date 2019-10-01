@@ -1,4 +1,4 @@
-# from datetime import datetime
+from datetime import datetime
 
 import numbers
 
@@ -17,7 +17,7 @@ from flaskapi.flaskapi.request_parsers import (
     login_parser, user_parser, self_transaction_parser, transfer_parser
 )
 
-DOCUMENTATION = 'github.com/tyronedamasceno/flask-vs-django-api/blob/master/docs.md'
+DOCS_URL = 'github.com/tyronedamasceno/flask-vs-django-api/blob/master/docs.md'
 
 
 def _create_transaction(user, value):
@@ -39,7 +39,7 @@ class Home(Resource):
             'Welcome, to register send a POST request to /user endpoint with \
             your email, password and doc_number, then, make a request to \
             /login to authenticate',
-            'docs': f'You cand find API documentation at: {DOCUMENTATION}'
+            'docs': f'You cand find API documentation at: {DOCS_URL}'
         }, 200
 
 
@@ -54,7 +54,9 @@ class Login(Resource):
             }, 401
         return {
             'message': 'Successful authenticated',
-            'token': create_access_token(identity=user.email)
+            'token': create_access_token(
+                identity=user.email, expires_delta=datetime.timedelta(hours=1)
+            )
         }, 200
 
 
