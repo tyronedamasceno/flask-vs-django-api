@@ -10,10 +10,6 @@ class BaseModel(object):
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
-        self.is_active = False
-        db.session.commit()
-
 
 class User(db.Model, BaseModel):
     id = db.Column(
@@ -63,6 +59,17 @@ class User(db.Model, BaseModel):
     def find_self_transactions(self):
         return Transaction.find_transaction_from_user(self.id)
 
+    def update_object_on_db(self, payload):
+        self.email = payload.get('email') or self.email
+        self.doc_number = payload.get('doc_number') or self.doc_number
+        if payload.get('password'):
+            self.password = User.generate_hash(payload.get('password'))
+        db.session.commit()
+
+    def delete_from_db(self):
+        self.is_active = False
+        db.session.commit()
+
     @staticmethod
     def generate_hash(password):
         return sha256.hash(password)
@@ -73,11 +80,17 @@ class User(db.Model, BaseModel):
 
     @classmethod
     def find_by_email(cls, email):
-        return cls.query.filter_by(email=email).first()
+        return cls.query \
+                        .filter_by(email=email) \
+                        .filter_by(is_active=True) \
+                        .first()
 
     @classmethod
     def find_by_doc_number(cls, doc_number):
-        return cls.query.filter_by(doc_number=doc_number).first()
+        return cls.query\
+                        .filter_by(doc_number=doc_number) \
+                        .filter_by(is_active=True) \
+                        .first()
 
 
 class Transaction(db.Model, BaseModel):

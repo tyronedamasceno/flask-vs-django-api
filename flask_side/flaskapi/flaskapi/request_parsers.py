@@ -9,6 +9,10 @@ def add_arguments_to_parser(parser, arguments):
 
 
 login_parser = reqparse.RequestParser()
+user_parser = reqparse.RequestParser()
+
 login_fields = ('email', 'password')
+user_fields = ('email', 'password', 'doc_number')
 
 add_arguments_to_parser(login_parser, login_fields)
+add_arguments_to_parser(user_parser, user_fields)
