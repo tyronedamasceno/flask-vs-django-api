@@ -183,4 +183,13 @@ class Transfer(Resource):
 
 
 class Statements(Resource):
-    pass
+    @jwt_required
+    def get(self):
+        user = _get_current_user()
+        if not user:
+            return {'message': 'User not found'}, 404
+        transactions = user.find_self_transactions()
+        return {
+            'message': 'Success',
+            'data': [t.to_dict() for t in transactions]
+        }, 200
