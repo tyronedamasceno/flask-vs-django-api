@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import numbers
 
@@ -55,7 +55,7 @@ class Login(Resource):
         return {
             'message': 'Successful authenticated',
             'token': create_access_token(
-                identity=user.email, expires_delta=datetime.timedelta(hours=1)
+                identity=user.email, expires_delta=timedelta(hours=1)
             )
         }, 200
 
