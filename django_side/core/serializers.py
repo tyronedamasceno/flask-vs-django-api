@@ -9,7 +9,7 @@ from core.models import User, Transaction
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email, doc_number', 'balance', 'password')
+        fields = ('id', 'email', 'doc_number', 'balance', 'password')
         extra_kwargs = {
             'balance': {'read_only': True},
             'password': {'write_only': True}
